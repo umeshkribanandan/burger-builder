@@ -5,10 +5,12 @@ import NavItem from "./NavItem";
 
 const NavItems = (props) => (
   <ul className={styles.NavItems}>
-    <NavItem link="/" active>
+    <NavItem exact link="/" active>
       Burger
     </NavItem>
-    <NavItem link="/checkout">Checkout</NavItem>
+    <NavItem exact link="/orders">
+      Orders
+    </NavItem>
   </ul>
 );
 
