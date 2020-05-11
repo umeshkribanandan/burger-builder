@@ -1,29 +1,15 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
+import { connect } from "react-redux";
+
 import CheckoutSummary from "../../components/Order/CheckoutSummary";
 import ContactData from "./ContactData";
+import * as actionTypes from "../../store/actions";
 
 class Checkout extends Component {
   state = {
-    ingredients: {},
-    totalPrice: 0,
     cdataselected: false,
   };
-
-  componentDidMount() {
-    const igSearchParams = new URLSearchParams(this.props.location.search);
-    let tempIng = {};
-    let tempPrice = 0;
-    for (const [key, value] of igSearchParams.entries()) {
-      if (key === "price") {
-        tempPrice = +value;
-      } else {
-        tempIng[key] = +value;
-      }
-    }
-    console.log(tempIng);
-    this.setState({ ingredients: tempIng, totalPrice: tempPrice });
-  }
 
   cancelHandler = () => {
     this.props.history.goBack();
@@ -41,7 +27,7 @@ class Checkout extends Component {
           <CheckoutSummary
             cancel={this.cancelHandler}
             success={this.successHandler}
-            ingredients={this.state.ingredients}
+            ingredients={this.props.ingredients}
           />
         ) : null}
         {this.state.cdataselected ? (
@@ -49,8 +35,8 @@ class Checkout extends Component {
             path={this.props.match.path + "/contact-data"}
             render={() => (
               <ContactData
-                price={this.state.totalPrice}
-                ingredients={this.state.ingredients}
+                price={this.props.totalPrice}
+                ingredients={this.props.ingredients}
               />
             )}
           />
@@ -60,4 +46,15 @@ class Checkout extends Component {
   }
 }
 
-export default Checkout;
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingre.ingredients,
+    totalPrice: state.ingre.totalPrice,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
