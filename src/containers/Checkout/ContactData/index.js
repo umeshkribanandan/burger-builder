@@ -1,10 +1,14 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 import styles from "./contactdata.module.css";
 import Button from "../../../components/UI/Button";
 import axiosOrders from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner";
 import Input from "../../../components/UI/Input";
+
+import withErrorHandler from "../../../hoc/withErrorHandler";
+import { purchase } from "../../../store/actions";
 
 class ContactData extends Component {
   state = {
@@ -100,7 +104,6 @@ class ContactData extends Component {
       },
     },
     validForm: false,
-    loading: false,
   };
 
   cancelHandler = () => {
@@ -149,7 +152,7 @@ class ContactData extends Component {
 
   orderHandler = (event) => {
     event.preventDefault();
-    this.setState({ loading: true });
+    // this.setState({ loading: true });
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.price,
@@ -165,20 +168,22 @@ class ContactData extends Component {
       },
     };
 
-    axiosOrders
-      .post("/orders.json", order)
-      .then((response) => {
-        console.log(response.data);
-        this.setState({ loading: false });
-        this.props.history.push("/");
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ loading: false });
-      });
+    this.props.onPurchase(order, this.props.token);
+    // axiosOrders
+    //   .post("/orders.json", order)
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     this.setState({ loading: false });
+    //     this.props.history.push("/");
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     this.setState({ loading: false });
+    //   });
   };
 
   render() {
+    console.log(this.props.purchased);
     let formelements = [];
     for (let key in this.state.orderForm) {
       formelements.push({
@@ -211,11 +216,12 @@ class ContactData extends Component {
         </Button>
       </form>
     );
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
     return (
       <div className={styles.ContactData}>
+        {this.props.purchased && <Redirect to="/" />}
         <h4>Enter your Contact Data</h4>
         {form}
       </div>
@@ -223,4 +229,24 @@ class ContactData extends Component {
   }
 }
 
-export default withRouter(ContactData);
+export const mapStateToProps = (state) => {
+  return {
+    price: state.ingre.totalPrice,
+    ingredients: state.ingre.ingredients,
+    order: state.ords.order,
+    loading: state.ords.loading,
+    purchased: state.ords.purchased,
+    token: state.auth.token,
+  };
+};
+
+export const mapDispatchToProps = (dispatch) => {
+  return {
+    onPurchase: (order, token) => dispatch(purchase(order, token)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(withRouter(ContactData), axiosOrders));

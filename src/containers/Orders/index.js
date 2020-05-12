@@ -1,51 +1,68 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import styles from "./orders.module.css";
 import Order from "../../components/Order";
 import axiosOrders from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler";
 
-class Orders extends Component {
-  state = {
-    orders: [],
-    loading: false,
-  };
+import { fetchOrders } from "./../../store/actions";
 
+class Orders extends Component {
   componentDidMount() {
-    this.setState({ loading: true });
-    axiosOrders
-      .get("/orders.json")
-      .then((response) => {
-        const tempOrderArray = [];
-        for (let key in response.data) {
-          tempOrderArray.push({
-            ...response.data[key],
-            id: key,
-          });
-        }
-        console.log(tempOrderArray);
-        this.setState({ loading: false, orders: tempOrderArray });
-      })
-      .catch((error) => {
-        console.log(error);
-        this.setState({ loading: false });
-      });
+    this.props.onFetchOrders(this.props.token);
+
+    // axiosOrders
+    //   .get("/orders.json")
+    //   .then((response) => {
+    //     const tempOrderArray = [];
+    //     for (let key in response.data) {
+    //       tempOrderArray.push({
+    //         ...response.data[key],
+    //         id: key,
+    //       });
+    //     }
+    //     console.log(tempOrderArray);
+    //     this.setState({ loading: false, orders: tempOrderArray });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     this.setState({ loading: false });
+    //   });
   }
 
   render() {
     let ords = null;
-    if (this.state.loading) {
+    if (this.props.loading) {
       ords = <Spinner />;
-    } else if (!this.state.loading && this.state.orders.length) {
-      ords = this.state.orders.map((o) => {
+    } else if (!this.props.loading && this.props.orders.length) {
+      ords = this.props.orders.map((o) => {
         return (
           <Order key={o.id} price={+o.price} ingredients={o.ingredients} />
         );
       });
     }
-
     return <div>{ords}</div>;
   }
 }
 
-export default withErrorHandler(Orders, axiosOrders);
+const mapStateToProps = (state) => {
+  return {
+    orders: state.ords.orders,
+    loading: state.ords.loading,
+    token: state.auth.token,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFetchOrders: (token) => {
+      dispatch(fetchOrders(token));
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(Orders, axiosOrders));

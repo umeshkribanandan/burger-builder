@@ -11,6 +11,9 @@ const NavItems = (props) => (
     <NavItem exact link="/orders">
       Orders
     </NavItem>
+    <NavItem exact link="/auth">
+      Authenticate
+    </NavItem>
   </ul>
 );
 

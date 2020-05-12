@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { Route } from "react-router-dom";
+import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 import CheckoutSummary from "../../components/Order/CheckoutSummary";
 import ContactData from "./ContactData";
-import * as actionTypes from "../../store/actions";
-
+import { purchaseInit } from "../../store/actions";
 class Checkout extends Component {
   state = {
     cdataselected: false,
   };
+
+  componentDidMount() {
+    this.props.onPurchaseInit();
+  }
 
   cancelHandler = () => {
     this.props.history.goBack();
@@ -23,6 +26,7 @@ class Checkout extends Component {
   render() {
     return (
       <div>
+        {!this.props.ingredients && <Redirect to="/" />}
         {!this.state.cdataselected ? (
           <CheckoutSummary
             cancel={this.cancelHandler}
@@ -33,12 +37,7 @@ class Checkout extends Component {
         {this.state.cdataselected ? (
           <Route
             path={this.props.match.path + "/contact-data"}
-            render={() => (
-              <ContactData
-                price={this.props.totalPrice}
-                ingredients={this.props.ingredients}
-              />
-            )}
+            render={() => <ContactData />}
           />
         ) : null}
       </div>
@@ -54,7 +53,11 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    onPurchaseInit: () => {
+      dispatch(purchaseInit());
+    },
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
