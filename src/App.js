@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from "react";
+import React, { Component } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
@@ -71,3 +71,13 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+
+// import React from 'react';
+// import { render } from '@testing-library/react';
+// import App from './App';
+
+// test('renders learn react link', () => {
+//   const { getByText } = render(<App />);
+//   const linkElement = getByText(/learn react/i);
+//   expect(linkElement).toBeInTheDocument();
+// });
