@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+
 import Aux from "../../hoc/Aux";
 import Burger from "../../components/Burger";
 import Controls from "../../components/Burger/Controls";
@@ -85,7 +86,11 @@ class BurgerBuilder extends Component {
   }
 
   updatePurchasing = () => {
-    this.setState({ purchasing: true });
+    if (!this.props.userId) {
+      this.props.history.push("/auth");
+    } else {
+      this.setState({ purchasing: true });
+    }
   };
 
   purchaseCancelHandler = () => {
@@ -123,6 +128,7 @@ class BurgerBuilder extends Component {
           removeIngredients={this.props.onRemoveIngredient}
         />
         <OrderButton
+          isLoggedIn={this.props.userId}
           ordered={this.updatePurchasing}
           buttonStatus={!this.updatePurchasable()}
         />
@@ -154,6 +160,7 @@ const mapStateToProps = (state) => {
     ingredients: state.ingre.ingredients,
     totalPrice: state.ingre.totalPrice,
     error: state.ingre.error,
+    userId: state.auth.userId,
   };
 };
 

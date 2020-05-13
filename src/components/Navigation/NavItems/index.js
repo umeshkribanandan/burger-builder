@@ -8,12 +8,20 @@ const NavItems = (props) => (
     <NavItem exact link="/" active>
       Burger
     </NavItem>
-    <NavItem exact link="/orders">
-      Orders
-    </NavItem>
-    <NavItem exact link="/auth">
-      Authenticate
-    </NavItem>
+    {props.isLoggedIn && (
+      <NavItem exact link="/orders">
+        Orders
+      </NavItem>
+    )}
+    {props.isLoggedIn ? (
+      <NavItem exact link="/logout">
+        Logout
+      </NavItem>
+    ) : (
+      <NavItem exact link="/auth">
+        Authenticate
+      </NavItem>
+    )}
   </ul>
 );
 

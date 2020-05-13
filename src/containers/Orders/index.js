@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import styles from "./orders.module.css";
+
 import Order from "../../components/Order";
 import axiosOrders from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner";
@@ -10,7 +10,7 @@ import { fetchOrders } from "./../../store/actions";
 
 class Orders extends Component {
   componentDidMount() {
-    this.props.onFetchOrders(this.props.token);
+    this.props.onFetchOrders(this.props.token, this.props.userId);
 
     // axiosOrders
     //   .get("/orders.json")
@@ -42,6 +42,10 @@ class Orders extends Component {
         );
       });
     }
+
+    if (!this.props.orders.length) {
+      ords = <p>There are no Burgers Ordered by you, Please Order One </p>;
+    }
     return <div>{ords}</div>;
   }
 }
@@ -51,13 +55,14 @@ const mapStateToProps = (state) => {
     orders: state.ords.orders,
     loading: state.ords.loading,
     token: state.auth.token,
+    userId: state.auth.userId,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchOrders: (token) => {
-      dispatch(fetchOrders(token));
+    onFetchOrders: (token, userId) => {
+      dispatch(fetchOrders(token, userId));
     },
   };
 };

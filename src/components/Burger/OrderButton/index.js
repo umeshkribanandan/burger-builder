@@ -8,7 +8,7 @@ const OrderButton = (props) => {
       disabled={props.buttonStatus}
       className={styles.OrderButton}
     >
-      Order
+      {props.isLoggedIn ? "Order" : "Sign In to Order"}
     </button>
   );
 };

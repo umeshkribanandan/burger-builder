@@ -9,6 +9,7 @@ import Input from "../../../components/UI/Input";
 
 import withErrorHandler from "../../../hoc/withErrorHandler";
 import { purchase } from "../../../store/actions";
+import { updateObject, validity } from "../../../shared/utility";
 
 class ContactData extends Component {
   state = {
@@ -110,38 +111,15 @@ class ContactData extends Component {
     this.props.history.push("/");
   };
 
-  validity(value, rules) {
-    let isValid = true;
-
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-
-    return isValid;
-  }
-
   inputChangeHandler = (event, key) => {
-    const updatedOrderForm = {
-      ...this.state.orderForm,
-    };
-    const updatedFormElement = {
-      ...updatedOrderForm[key],
-    };
-    updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = this.validity(
-      updatedFormElement.value,
-      updatedFormElement.validation
-    );
-    updatedFormElement.touched = true;
-    updatedOrderForm[key] = updatedFormElement;
+    const updatedFormElement = updateObject(this.state.orderForm[key], {
+      value: event.target.value,
+      valid: validity(event.target.value, this.state.orderForm[key].validation),
+      touched: true,
+    });
+    const updatedOrderForm = updateObject(this.state.orderForm, {
+      [key]: updatedFormElement,
+    });
 
     let isFormValid = true;
     for (let key in updatedOrderForm) {
@@ -154,6 +132,7 @@ class ContactData extends Component {
     event.preventDefault();
     // this.setState({ loading: true });
     const order = {
+      userId: this.props.userId,
       ingredients: this.props.ingredients,
       price: this.props.price,
       customer: {
@@ -237,6 +216,7 @@ export const mapStateToProps = (state) => {
     loading: state.ords.loading,
     purchased: state.ords.purchased,
     token: state.auth.token,
+    userId: state.auth.userId,
   };
 };
 

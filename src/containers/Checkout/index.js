@@ -15,7 +15,7 @@ class Checkout extends Component {
   }
 
   cancelHandler = () => {
-    this.props.history.goBack();
+    this.props.history.push("/");
   };
 
   successHandler = () => {
@@ -24,6 +24,7 @@ class Checkout extends Component {
   };
 
   render() {
+    console.log(this.props.ingredients);
     return (
       <div>
         {!this.props.ingredients && <Redirect to="/" />}

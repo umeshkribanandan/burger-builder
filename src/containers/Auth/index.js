@@ -5,6 +5,7 @@ import Button from "../../components/UI/Button";
 import Input from "../../components/UI/Input";
 import { auth } from "../../store/actions";
 import Spinner from "../../components/UI/Spinner";
+import { updateObject, validity } from "../../shared/utility";
 
 class Auth extends Component {
   state = {
@@ -43,37 +44,17 @@ class Auth extends Component {
     isSignUp: true,
   };
 
-  validity(value, rules) {
-    let isValid = true;
-
-    if (rules.required) {
-      isValid = value.trim() !== "" && isValid;
-    }
-
-    if (rules.minLength) {
-      isValid = value.length >= rules.minLength && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = value.length <= rules.maxLength && isValid;
-    }
-
-    return isValid;
-  }
-
   inputChangeHandler = (event, key) => {
-    const updatedForm = {
-      ...this.state.controls,
-      [key]: {
-        ...this.state.controls[key],
+    const updatedForm = updateObject(this.state.controls, {
+      [key]: updateObject(this.state.controls[key], {
         value: event.target.value,
-        valid: this.validity(
+        valid: validity(
           event.target.value,
           this.state.controls[key].validation
         ),
         touched: true,
-      },
-    };
+      }),
+    });
 
     let isFormValid = true;
     for (let key in updatedForm) {
@@ -104,6 +85,11 @@ class Auth extends Component {
       this.state.controls.password.value,
       this.state.isSignUp
     );
+    if (this.props.building) {
+      this.props.history.push("/checkout");
+    } else {
+      this.props.history.push("/");
+    }
   };
 
   switchHandler = (event) => {
@@ -159,6 +145,7 @@ class Auth extends Component {
 }
 const mapStateToProps = (state) => {
   return {
+    building: state.ingre.building,
     loading: state.auth.loading,
     error: state.auth.error,
   };
