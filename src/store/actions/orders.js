@@ -25,7 +25,12 @@ export const purchaseFailure = () => {
     type: actionTypes.PURCHASE_FAILURE,
   };
 };
+
 export const purchase = (order, token) => {
+  return {
+    type: actionTypes.PURCHASE,
+    payload: { token, order },
+  };
   return (dispatch) => {
     dispatch(purchaseStart());
     axios
@@ -62,24 +67,28 @@ export const fetchOrdersFailure = () => {
 };
 
 export const fetchOrders = (token, userId) => {
-  return (dispatch) => {
-    dispatch(fetchOrdersStart());
-    const queryParams =
-      "?auth=" + token + '&orderBy="userId"&equalTo="' + userId + '"';
-    axios
-      .get("/orders.json" + queryParams)
-      .then((response) => {
-        let tempOrderArray = [];
-        for (let key in response.data) {
-          tempOrderArray.push({
-            ...response.data[key],
-            id: key,
-          });
-        }
-        dispatch(fetchOrdersSuccess(tempOrderArray));
-      })
-      .catch((error) => {
-        dispatch(fetchOrdersFailure(error));
-      });
+  return {
+    type: actionTypes.FETCH_ORDERS_INIT,
+    payload: { token, userId },
   };
+  // return (dispatch) => {
+  //   dispatch(fetchOrdersStart());
+  //   const queryParams =
+  //     "?auth=" + token + '&orderBy="userId"&equalTo="' + userId + '"';
+  //   axios
+  //     .get("/orders.json" + queryParams)
+  //     .then((response) => {
+  //       let tempOrderArray = [];
+  //       for (let key in response.data) {
+  //         tempOrderArray.push({
+  //           ...response.data[key],
+  //           id: key,
+  //         });
+  //       }
+  //       dispatch(fetchOrdersSuccess(tempOrderArray));
+  //     })
+  //     .catch((error) => {
+  //       dispatch(fetchOrdersFailure(error));
+  //     });
+  // };
 };

@@ -1,6 +1,4 @@
 import * as actionTypes from "./actionTypes";
-import axios from "../../axios-orders";
-
 
 export const addIngredient = (igType) => {
   return {
@@ -30,14 +28,17 @@ export const fetchIngredientsFailed = () => {
 };
 
 export const initIngredient = () => {
-  return (dispatch) => {
-    axios
-      .get("/ingredients.json")
-      .then((response) => {
-        dispatch(setIngredients(response.data));
-      })
-      .catch((error) => {
-        dispatch(fetchIngredientsFailed(error));
-      });
+  return {
+    type: actionTypes.FETCH_INGREDIENTS_INIT,
   };
+  // return (dispatch) => {
+  //   axios
+  //     .get("/ingredients.json")
+  //     .then((response) => {
+  //       dispatch(setIngredients(response.data));
+  //     })
+  //     .catch((error) => {
+  //       dispatch(fetchIngredientsFailed(error));
+  //     });
+  // };
 };
