@@ -31,20 +31,20 @@ export const purchase = (order, token) => {
     type: actionTypes.PURCHASE,
     payload: { token, order },
   };
-  return (dispatch) => {
-    dispatch(purchaseStart());
-    axios
-      .post("/orders.json?auth=" + token, order)
-      .then((response) => {
-        dispatch(purchaseSuccess(response.data.name, order));
-        // this.setState({ loading: false });
-        // this.props.history.push("/");
-      })
-      .catch((error) => {
-        dispatch(purchaseFailure(error));
-        // this.setState({ loading: false });
-      });
-  };
+  // return (dispatch) => {
+  //   dispatch(purchaseStart());
+  //   axios
+  //     .post("/orders.json?auth=" + token, order)
+  //     .then((response) => {
+  //       dispatch(purchaseSuccess(response.data.name, order));
+  //       // this.setState({ loading: false });
+  //       // this.props.history.push("/");
+  //     })
+  //     .catch((error) => {
+  //       dispatch(purchaseFailure(error));
+  //       // this.setState({ loading: false });
+  //     });
+  // };
 };
 
 export const fetchOrdersStart = () => {
